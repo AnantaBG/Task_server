@@ -27,6 +27,34 @@ async function run() {
     const allUsers = db.collection('UsersData');
     const allTasks = db.collection('TasksDB');
 
+    app.get('/allTasks', async (req, res) => { // Correct route definition
+        try {
+            let query = {}; // Initialize an empty query object
+    
+            if (req.query.category) { // Check if the 'category' query parameter exists
+                const category = req.query.category;
+    
+                const allowedCategories = ["To-Do", "In Progress", "Done"]; // Define allowed categories
+                if (allowedCategories.includes(category)) { // check if it is in the array
+                    query = { category: category };
+                } else {
+                    return res.status(400).send("Invalid category"); // Return error if invalid category
+                }
+    
+    
+            }
+    
+            const result = await allTasks.find(query).toArray(); // Use the query object in .find()
+    
+            res.send(result);
+            console.log("Pinged your deployment. You successfully connected TaskMan to MongoDB!");
+    
+        } catch (error) {
+            console.error("Error in /allTasks route:", error);
+            res.status(500).send("Internal server error"); // Send a generic error response
+        }
+    });
+
     app.post('/users', async (req, res) => {
       const user = req.body;
       const query = { email: user.email };
@@ -110,6 +138,9 @@ async function run() {
       res.send(result);
     });
 
+
+
+
     app.get('/allTasks', async (req, res) => {
       const result = await allTasks.find().toArray();
       res.send(result);
@@ -122,6 +153,8 @@ async function run() {
     process.exit(1); // Exit if DB connection fails
   }
 }
+
+
 
 run();
 
