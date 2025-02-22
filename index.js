@@ -21,7 +21,6 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
 
     const db = client.db('TaskMan');
     const allUsers = db.collection('UsersData');
@@ -166,7 +165,6 @@ app.get('/', (req, res) => {
 process.on('SIGINT', async () => {
   console.log('Shutting down server...');
   try {
-    await client.close();
     console.log('MongoDB connection closed.');
     process.exit(0);
   } catch (err) {
